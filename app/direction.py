@@ -2,10 +2,12 @@ from time import sleep
 import numpy as np
 
 class Direction:
-    __next = None
-    __name: str = ""
-    __waiting_times : list = []
-    avg_flow : int = 0
+    next = None
+
+    def __init__(self, _name : str, _waiting_times : list, _avg_flow : int):
+        self.__name : str = _name
+        self.__waiting_times : list = _waiting_times
+        self.avg_flow : int = _avg_flow
 
     def empty(self, p) -> int:
         """
@@ -17,7 +19,7 @@ class Direction:
         """
         cycle_volume = self.cycle_volume()
         cycle_durr = cycle_volume * p
-        self.__waiting_times = self.__waiting_times[cycle_volume]
+        self.__waiting_times = self.__waiting_times[cycle_volume:]
         sleep(cycle_durr)
         return cycle_durr
 
@@ -28,8 +30,8 @@ class Direction:
         :param waiting_time: the waiting time to be added to all cars for this direcion
         :return: None
         """
-        for time in self.__waiting_times:
-            time += waiting_time
+        for i in range(0, len(self.__waiting_times)):
+            self.__waiting_times[i] += waiting_time
 
 
     def add_vehicles(self, num_vehicles : int = None) -> None:

@@ -41,4 +41,7 @@ number of directions
 ### Controller
 - Controls an intersection's traffic, acts as a puppet of sorts
 - Starts control of the traffic with a method start()
-- 
+
+### Cmd_Line
+- Command line application that presents the current state of this application
+- User is able to start the application, and view the average wait time for each of the directions

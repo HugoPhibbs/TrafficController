@@ -1,5 +1,5 @@
 import numpy as np
-from Direction import Direction
+from direction import Direction
 
 
 class Intersection:
@@ -9,13 +9,15 @@ class Intersection:
     Contains methods to manage the directions of this intersection, (CRUD actions)
 
     Attributes
-        __directions    Cyclic linked list object containing Direction objects
         __head_direction head to the __directions linked list
         num_directions  length of __directions linked list
     """
-    __directions = None
-    __head_direction: Direction = None
+    head_direction: Direction = None
     num_directions: int = 0
+
+    def __init__(self, _head_direction, _num_directions : int):
+        self.head_direction = _head_direction
+        self.num_directions = _num_directions
 
     def add_waiting_time(self, prev_cycle_durr : int) -> None:
         """
@@ -28,7 +30,10 @@ class Intersection:
         i = 1
         while i <= self.num_directions:
             curr_direction.add_waiting_time(prev_cycle_durr)
-            curr_direction = curr_direction.__next
+            curr_direction = curr_direction.next
+            i += 1
+
+
 
     def add_direction(self, new_direction: Direction):
         """
@@ -42,9 +47,9 @@ class Intersection:
         i = 1
         curr_direction = self.head_direction
         while i < self.num_directions:
-            curr_direction = curr_direction.__next
-        curr_direction.__next = new_direction
-        new_direction.__next = self.head_direction
+            curr_direction = curr_direction.next
+        curr_direction.next = new_direction
+        new_direction.next = self.head_direction
         self.num_directions += 1
 
     def add_vehicles(self) -> None:
@@ -52,7 +57,7 @@ class Intersection:
         Adds vehicles to each of the directions for this intersection
         :return: None
         """
-        curr_direction = self.__head_direction
+        curr_direction = self.head_direction
         for i in range(0, self.num_directions):
             curr_direction.add_vehicles()
 
