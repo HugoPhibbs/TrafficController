@@ -4,9 +4,9 @@ import numpy as np
 class Direction:
     next = None
 
-    def __init__(self, _name : str, _waiting_times : list, _avg_flow : int):
+    def __init__(self, _name : str, _waiting_times : list = [], _avg_flow : int = 0):
         self.__name : str = _name
-        self.__waiting_times : list = _waiting_times
+        self.waiting_times = _waiting_times
         self.avg_flow : int = _avg_flow
 
     def empty(self, p) -> int:
@@ -19,7 +19,7 @@ class Direction:
         """
         cycle_volume = self.cycle_volume()
         cycle_durr = cycle_volume * p
-        self.__waiting_times = self.__waiting_times[cycle_volume:]
+        self.waiting_times = self.waiting_times[cycle_volume:]
         sleep(cycle_durr)
         return cycle_durr
 
@@ -27,12 +27,10 @@ class Direction:
         """
         Adds waiting time to each vehicle for this particular direction of traffic
 
-        :param waiting_time: the waiting time to be added to all cars for this direcion
+        :param waiting_time: the waiting time to be added to all cars for this direction
         :return: None
         """
-        for i in range(0, len(self.__waiting_times)):
-            self.__waiting_times[i] += waiting_time
-
+        self.waiting_times = np.add(self.waiting_times, waiting_time)
 
     def add_vehicles(self, num_vehicles : int = None) -> None:
         """
@@ -48,7 +46,7 @@ class Direction:
 
         if num_vehicles is None:
             num_vehicles = abs(np.floor(np.random.normal(self.avg_flow)))
-        self.__waiting_times.append([0] * num_vehicles)
+        self.waiting_times.append([0] * num_vehicles)
 
     def cycle_volume(self) -> int:
         """
@@ -60,11 +58,11 @@ class Direction:
 
         :return: cycle volume as described
         """
-        curr_total = sum(self.__waiting_times)
+        curr_total = sum(self.waiting_times)
         req_total = curr_total // 2
         volume = 0
         i = 0
         while curr_total > req_total:
             volume += 1
-            curr_total -= self.__waiting_times[i]
+            curr_total -= self.waiting_times[i]
         return volume
