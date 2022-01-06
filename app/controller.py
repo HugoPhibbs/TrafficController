@@ -1,5 +1,5 @@
-from intersection import Intersection
-from direction import Direction
+from app.intersection import Intersection
+from app.direction import Direction
 
 class Controller:
 
