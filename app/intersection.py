@@ -8,42 +8,124 @@ class Intersection:
     Contains methods to manage the directions of this intersection, (CRUD actions)
 
     Attributes
-        __head_direction head to the __directions linked list
-        num_directions  length of __directions linked list
+        head_direction head to the linked list made of Direction objects
+        num_directions length of the Direction linked list
     """
-    head_direction: Direction = None
-    __num_directions: int = 0
+    __num_directions : int
 
-    def __init__(self, _head_direction, _num_directions: int):
-        self.head_direction = _head_direction
-        self.__num_directions = Intersection.calc_num_directions(_head_direction)
+    def __init__(self, head):
+        """
+        Initializer for an Intersection object
+
+        :param head: Direction object for the head of the linked list for this intersection
+        """
+        self.head_direction = head
+
+    @property
+    def head_direction(self) -> Direction:
+        """
+        Getter for the head_direction Direction object for this intersection
+
+        :return: Direction object as described
+        """
+        return self._head_direction
+
+    @head_direction.setter
+    def head_direction(self, head_direction: Direction) -> None:
+        """
+        Sets the head_direction attribute for this Class. Makes sure that it is acceptable before doing so
+
+        Throws an error if the head_direction is not cyclic
+
+        :param head_direction: Direction object to be set as the head_direction for this Class
+        :return: None
+        """
+        assert Intersection.list_is_circular(head_direction)
+        self._head_direction = head_direction
+        self.__set_num_directions()
+
+    @property
+    def num_directions(self) -> int:
+        """
+        Getter for num_directions of this intersection.
+
+        Made read only because num_direction is essential for other methods to function correctly
+
+        :return: number of directions for this intersection
+        """
+        return self.__num_directions
+
+    def __set_num_directions(self) -> None:
+        """
+        Sets the number of directions for this Intersection object.
+
+        The length of an inputted linked list must be more than 2, and be cyclic
+
+        :param head: Direction object for the head of a linked list
+        :return:
+        """
+        num = Intersection.list_length(self.head_direction)
+        assert num >= 2
+        self.__num_directions = num
 
     @staticmethod
-    def calc_num_directions(head_direction : Direction) -> int:
+    def list_is_circular(head: Direction) -> bool:
         """
-        Calculates the number of Directions for a given cyclic Direction linked list object
+        Determines if a linked list is circular or not. By definition a linked list is circular if it contains a cycle, and the
+        cycle is the length of the linked list itself.
 
-        :param head_direction: Direction object that points to the front of the cyclic linked list
-        :return: int for the number of objects in the cyclic linked list
+
+        While some algorithms online for this assume that the linked list is either acyclic or circular, this one can account
+        for an inputted linked list that is either cyclic, acyclic or circular
+
+        :param head: Object that is the head of a linked list
+        :return: bool if a linked list is circular or not
         """
-        if head_direction is None:
+        if head is None:
+            return False
+        cache = set()
+        curr = head.next
+        if curr is None:
+            return False
+        if curr.next is head:
+            return True
+        while curr is not None:
+            if curr is head:
+                return True
+            elif curr in cache:
+                return False
+            else:
+                cache.add(curr)
+            curr = curr.next
+        return False
+
+    @staticmethod
+    def list_length(head: Direction) -> int:
+        """
+        Calculates the length of a linked list, works for regular, circular and cyclic linked lists\
+
+        :param head: Direction object that is the head of a linked list
+        :return: int for the length of a linked list as described
+        """
+        if head is None:
             return 0
-        num = 1
-        curr_direction = head_direction.next
-        while curr_direction is not head_direction:
-            num += 1
-            curr_direction = curr_direction.next
-        return num
-
-    def set_head_direction(self, head_direction : Direction):
-        # Check if length is not 0
-        pass
-
-    def list_is_cyclic(self):
-        pass
-
-    def set_num_directions(self):
-        pass
+        cache = set()
+        curr = head.next
+        length = 1
+        if curr is None:
+            return length
+        if curr is head:
+            return 1
+        if curr.next is head:
+            return 2
+        while curr is not None:
+            if curr is head or curr in cache:
+                return length
+            else:
+                cache.add(curr)
+                length += 1
+            curr = curr.next
+        return length
 
     def add_waiting_time(self, prev_cycle_durr: int) -> None:
         """
@@ -60,6 +142,25 @@ class Intersection:
             curr_direction = curr_direction.next
             i += 1
 
+    def __contains__(self, item) -> bool:
+        """
+        Checks if an Intersection contains an object.
+
+        Really just checks if inputted item is in the Direction linked list belonging to this Intersection
+
+        :param item: object to be checked if it is contained in this Intersection
+        :return: bool if item is contained in this Intersection or not
+        """
+        if isinstance(item, Direction):
+            curr = self.head_direction
+            i = 1
+            while i <= self.num_directions:
+                if curr is item:
+                    return True
+                curr = curr.next
+                i += 1
+        return False
+
     def remove_direction(self, direction) -> bool:
         """
         Removes a direction from this intersection
@@ -68,14 +169,14 @@ class Intersection:
         :return: Boolean if the inputted Direction object was removed or not
         """
         i = 1
+        assert self.__num_directions > 2, "Cannot remove a direction from intersection with only 2 directions!"
         if self.head_direction == direction:
             curr_direction = self.head_direction
             while i < self.__num_directions:
                 i += 1
                 curr_direction = curr_direction.next
             curr_direction.next = self.head_direction.next
-            self.head_direction = self.head_direction
-            self.__num_directions -= 1
+            self.head_direction = curr_direction
             return True
         else:
             prev_direction = self.head_direction
@@ -83,15 +184,15 @@ class Intersection:
             while i <= self.__num_directions:
                 if curr_direction == direction:
                     prev_direction.next = curr_direction.next
+                    self.__num_directions -= 1
                     return True
                 else:
                     curr_direction = curr_direction.next
                     prev_direction = prev_direction.next
                 i += 1
-            self.__num_directions -= 1
             return False
 
-    def add_direction(self, new_direction: Direction):
+    def add_direction(self, new_direction: Direction) -> None:
         """
         Adds a new direction to this intersection.
 
@@ -115,5 +216,8 @@ class Intersection:
         :return: None
         """
         curr_direction = self.head_direction
-        for i in range(0, self.__num_directions):
+        i = 0
+        while i <= self.num_directions:
             curr_direction.add_vehicles()
+            curr_direction = curr_direction.next
+            i += 1
