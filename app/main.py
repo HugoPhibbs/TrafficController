@@ -23,7 +23,7 @@ east.next = south
 south.next = west
 west.next = north
 
-intersection = Intersection(north, 4)
+intersection = Intersection(north)
 
 controller = Controller(intersection, pass_durr)
 
