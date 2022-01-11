@@ -16,6 +16,19 @@ in a 4 way intersection-- left, right and straight turning traffic.
 - An intersection has 4 directions, north, east, south and west
 - The inflow of traffic for a particular direction follows a normal distribution around a mean > 0
 
+## Project Requirements
+
+### Functional
+- Application should have the ability to run both autonously with no interaction from a user, or be run as directed by a user
+- The application should have a command line interface to start and end the application
+
+### Quality
+- Application should function with minimal delay between cycles of traffic
+- Code should be made as modular as possible. This makes things easier to debug, test and expand later on
+- There should be documentation throughout
+- Code should be both unit and integration tested
+- Code should be robust and be able to handle a variety of input data.=
+
 # Implementation 
 
 ## Classes
@@ -44,4 +57,6 @@ number of directions
 
 ### Cmd_Line
 - Command line application that presents the current state of this application
-- User is able to start the application, and view the average wait time for each of the directions
+- User is able to start the application, and view the average wait time for each of the directions. 
+- After each cycle letting a direction through the intersection, the user should be prompted to go through the next cycle
+- Should have a Controller object attribute that it interfaces with
