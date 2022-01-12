@@ -11,7 +11,7 @@ class Intersection:
         head_direction head to the linked list made of Direction objects
         num_directions length of the Direction linked list
     """
-    __num_directions : int
+    __num_directions: int
 
     def __init__(self, head):
         """
@@ -20,6 +20,34 @@ class Intersection:
         :param head: Direction object for the head of the linked list for this intersection
         """
         self.head_direction = head
+
+    @property
+    def avg_waiting_time(self) -> float:
+        """
+        Finds the average waiting time per vehicle for this intersection
+
+        :return: float as described
+        """
+        curr = self.head_direction.next
+        total_waiting_time = self.head_direction.cum_waiting_time
+        while curr is not self.head_direction:
+            total_waiting_time += curr.num_vehicles
+            curr = curr.next
+        return total_waiting_time / self.num_vehicles
+
+    @property
+    def num_vehicles(self) -> int:
+        """
+        Finds the number of vehicles that are at this intersection
+
+        :return: int as described
+        """
+        curr = self.head_direction.next
+        total_vehicles = self.head_direction.num_vehicles
+        while curr is not self.head_direction:
+            total_vehicles += curr.num_vehicles
+            curr = curr.next
+        return total_vehicles
 
     @property
     def head_direction(self) -> Direction:
@@ -61,7 +89,6 @@ class Intersection:
 
         The length of an inputted linked list must be more than 2, and be cyclic
 
-        :param head: Direction object for the head of a linked list
         :return:
         """
         num = Intersection.list_length(self.head_direction)
