@@ -1,4 +1,6 @@
 import numpy as np
+
+from app.command_line import CommandLine
 from direction import Direction
 from intersection import Intersection
 from controller import Controller
@@ -27,4 +29,6 @@ intersection = Intersection(north)
 
 controller = Controller(intersection, pass_durr)
 
-controller.start()
+cmd_line = CommandLine(controller)
+
+cmd_line.start()
